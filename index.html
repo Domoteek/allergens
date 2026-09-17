@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informations Allergènes — Fiche Produit</title>
+    <meta name="description" content="Consultez les informations allergènes réglementaires (INCO) de nos produits en scannant le QR code de l'étiquette.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🏷️</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-alt: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --danger: #ef4444;
+            --danger-bg: rgba(239,68,68,0.12);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245,158,11,0.12);
+            --success: #10b981;
+            --success-bg: rgba(16,185,129,0.10);
+            --border: rgba(148,163,184,0.15);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* === HEADER === */
+        .header {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #3730a3 100%);
+            padding: 32px 20px 28px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 50%, rgba(99,102,241,0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.85);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+        .header h1 {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+            position: relative;
+        }
+        .header p {
+            font-size: 13px;
+            color: rgba(255,255,255,0.65);
+            position: relative;
+        }
+
+        /* === MAIN CONTENT === */
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        /* === PRODUCT CARD === */
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .product-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(99,102,241,0.12);
+            color: var(--accent-light);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .product-name {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 6px;
+        }
+        .product-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .product-meta {
+            display: flex;
+            gap: 12px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+        .product-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--bg-card-alt);
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+
+        /* === ALLERGEN SECTION === */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+            color: var(--text-primary);
+        }
+        .section-title .icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        .section-title .icon.danger { background: var(--danger-bg); }
+        .section-title .icon.success { background: var(--success-bg); }
+
+        .allergen-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .allergen-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .allergen-item:active {
+            transform: scale(0.97);
+        }
+        .allergen-item.present {
+            background: var(--danger-bg);
+            border-color: rgba(239,68,68,0.25);
+        }
+        .allergen-item.traces {
+            background: var(--warning-bg);
+            border-color: rgba(245,158,11,0.25);
+        }
+        .allergen-item.absent {
+            opacity: 0.5;
+        }
+
+        .allergen-emoji {
+            font-size: 20px;
+            flex-shrink: 0;
+            width: 28px;
+            text-align: center;
+        }
+        .allergen-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .allergen-name {
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        .allergen-status {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .allergen-status.present { color: var(--danger); }
+        .allergen-status.traces { color: var(--warning); }
+        .allergen-status.absent { color: var(--text-muted); }
+
+        /* === LEGEND === */
+        .legend {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
+        .legend-dot.present { background: var(--danger); }
+        .legend-dot.traces { background: var(--warning); }
+        .legend-dot.absent { background: var(--text-muted); }
+
+        /* === INGREDIENTS === */
+        .ingredients-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .ingredients-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .ingredients-text strong {
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        /* === REGULATORY NOTICE === */
+        .regulatory {
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+        .regulatory-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .regulatory-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* === NON-FOOD === */
+        .non-food-notice {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+        }
+        .non-food-notice .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        .non-food-notice h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .non-food-notice p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            max-width: 340px;
+            margin: 0 auto;
+        }
+
+        /* === FOOTER === */
+        .footer {
+            text-align: center;
+            padding: 24px 16px;
+            border-top: 1px solid var(--border);
+            margin-top: 16px;
+        }
+        .footer-logo {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+        .footer-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* === NOT FOUND === */
+        .not-found {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .not-found .icon { font-size: 56px; margin-bottom: 16px; }
+        .not-found h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .not-found p { font-size: 14px; color: var(--text-secondary); }
+
+        /* === ANIMATIONS === */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in {
+            animation: fadeInUp 0.4s ease forwards;
+            opacity: 0;
+        }
+        .animate-in:nth-child(2) { animation-delay: 0.05s; }
+        .animate-in:nth-child(3) { animation-delay: 0.1s; }
+        .animate-in:nth-child(4) { animation-delay: 0.15s; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-badge">🏷️ Fiche Allergènes INCO</div>
+        <h1 id="page-title">Informations Allergènes</h1>
+        <p id="page-subtitle">Conformément au règlement (UE) n°1169/2011</p>
+    </div>
+
+    <div class="container" id="app">
+        <!-- Populated by JS -->
+    </div>
+
+    <script>
+    // =====================================================
+    // BASE DE DONNÉES PRODUITS & ALLERGÈNES
+    // =====================================================
+    // Les 14 allergènes réglementaires INCO
+    const ALLERGENS = [
+        { id: 'gluten',     name: 'Gluten',         emoji: '🌾' },
+        { id: 'crustaces',  name: 'Crustacés',      emoji: '🦐' },
+        { id: 'oeufs',      name: 'Œufs',           emoji: '🥚' },
+        { id: 'poisson',    name: 'Poisson',         emoji: '🐟' },
+        { id: 'arachides',  name: 'Arachides',       emoji: '🥜' },
+        { id: 'soja',       name: 'Soja',            emoji: '🫘' },
+        { id: 'lait',       name: 'Lait',            emoji: '🥛' },
+        { id: 'fruits_coque', name: 'Fruits à coque', emoji: '🌰' },
+        { id: 'celeri',     name: 'Céleri',          emoji: '🥬' },
+        { id: 'moutarde',   name: 'Moutarde',        emoji: '🟡' },
+        { id: 'sesame',     name: 'Sésame',          emoji: '⚪' },
+        { id: 'sulfites',   name: 'Sulfites',        emoji: '🧪' },
+        { id: 'lupin',      name: 'Lupin',           emoji: '🌸' },
+        { id: 'mollusques', name: 'Mollusques',      emoji: '🐚' }
+    ];
+
+    // 'present' | 'traces' | 'absent'
+    const PRODUCTS = {
+        'cote-de-boeuf': {
+            name: 'Côte de Bœuf Maturée',
+            category: 'Boucherie',
+            categoryEmoji: '🥩',
+            description: 'Race Charolaise — Maturation 28 jours sur os. Viande Bovine Française.',
+            isFood: true,
+            weight: '1.240 kg',
+            origin: 'France (Bourgogne)',
+            ingredients: 'Viande de bœuf (100%). Race Charolaise, catégorie A, née et élevée en France.',
+            allergens: {
+                // Viande pure, pas d'allergènes déclarés
+            }
+        },
+        'pain-levain': {
+            name: 'Pain au Levain T80',
+            category: 'Boulangerie',
+            categoryEmoji: '🥖',
+            description: 'Fabrication artisanale au levain naturel — Cuisson au four à sole.',
+            isFood: true,
+            weight: '500 g',
+            origin: 'France',
+            ingredients: 'Farine de <strong>BLÉ</strong> T80, eau, levain naturel (farine de <strong>BLÉ</strong>, eau), sel de Guérande.',
+            allergens: {
+                gluten: 'present',
+                sesame: 'traces'
+            }
+        },
+        'biere-ipa': {
+            name: 'Bière Blonde IPA Pur Malt',
+            category: 'Brasserie',
+            categoryEmoji: '🍺',
+            description: 'India Pale Ale brassée avec des houblons aromatiques. Amertume marquée, notes d\'agrumes.',
+            isFood: true,
+            volume: '33 cl — 6.2% vol.',
+            origin: 'France',
+            ingredients: 'Eau, malt d\'<strong>ORGE</strong>, houblon (Citra, Cascade, Simcoe), levure.',
+            allergens: {
+                gluten: 'present'
+            }
+        },
+        'saucisson-sec': {
+            name: 'Saucisson Sec Pur Porc',
+            category: 'Charcuterie',
+            categoryEmoji: '🥓',
+            description: 'Fabrication traditionnelle — Séchage naturel 5 semaines minimum.',
+            isFood: true,
+            weight: '250 g',
+            origin: 'France',
+            ingredients: 'Viande de porc (Origine France), sel, poivre, <strong>LACTOSE</strong>, dextrose, ferments, boyau naturel. Conservateur : E252.',
+            allergens: {
+                lait: 'present',
+                fruits_coque: 'traces'
+            }
+        },
+        'savon-karite': {
+            name: 'Savon Surgras Karité & Argan',
+            category: 'Cosmétique',
+            categoryEmoji: '🧴',
+            description: 'Savon surgras artisanal saponifié à froid. Enrichi en beurre de karité et huile d\'argan bio.',
+            isFood: false,
+            weight: '100 g',
+            ingredients: 'Sodium Olivate*, Sodium Shea Butterate*, Sodium Cocoate*, Aqua, Glycerin, Sodium Arganate*, Lavandula Angustifolia Oil, Linalool, Geraniol. *Issu de l\'agriculture biologique.'
+        },
+        'miel-acacia': {
+            name: 'Miel d\'Acacia de France',
+            category: 'Épicerie',
+            categoryEmoji: '🍯',
+            description: '100% miel d\'acacia récolté et mis en pot par l\'apiculteur. Doux aux arômes floraux.',
+            isFood: true,
+            weight: '250 g',
+            origin: 'France (Val de Loire)',
+            ingredients: 'Miel d\'acacia (100%). Produit naturel.',
+            allergens: {
+                // Miel pur — pas d'allergènes réglementaires
+            }
+        },
+        'comte-aop': {
+            name: 'Comté AOP Réserve Extra',
+            category: 'Fromagerie',
+            categoryEmoji: '🧀',
+            description: 'Affinage 18 mois en cave naturelle. Appellation d\'Origine Protégée.',
+            isFood: true,
+            weight: '~250 g',
+            origin: 'France (Massif Jurassien)',
+            ingredients: '<strong>LAIT</strong> cru de vache (Massif Jurassien), sel, ferments lactiques, présure.',
+            allergens: {
+                lait: 'present'
+            }
+        },
+        'controle-qualite': {
+            name: 'Suivi & Contrôle Qualité Pièce',
+            category: 'Industrie',
+            categoryEmoji: '🏭',
+            description: 'Étiquette de suivi industriel pour le contrôle qualité des pièces de production.',
+            isFood: false
+        },
+        'bordereau-colis': {
+            name: 'Bordereau Colis Express',
+            category: 'Logistique',
+            categoryEmoji: '📦',
+            description: 'Étiquette d\'expédition et de suivi logistique pour colis express.',
+            isFood: false
+        },
+        'eclairs-chocolat': {
+            name: 'Éclairs Pur Chocolat',
+            category: 'Pâtisserie',
+            categoryEmoji: '🍫',
+            description: 'Lot de 4 pièces — Pâte à choux, crème pâtissière au chocolat noir 70%, glaçage.',
+            isFood: true,
+            weight: '4 × 80 g',
+            origin: 'France',
+            ingredients: 'Pâte à choux (<strong>ŒUFS</strong> frais, farine de <strong>BLÉ</strong>, <strong>BEURRE</strong> AOP, <strong>LAIT</strong> entier, sucre, sel), crème pâtissière chocolat noir 70% (<strong>LAIT</strong>, chocolat, jaunes d\'<strong>ŒUFS</strong>, sucre, fécule, vanille Bourbon), glaçage (chocolat noir, <strong>BEURRE</strong>, sucre glace).',
+            allergens: {
+                gluten: 'present',
+                oeufs: 'present',
+                lait: 'present',
+                soja: 'traces',
+                fruits_coque: 'traces'
+            }
+        },
+        'dos-cabillaud': {
+            name: 'Dos de Cabillaud Frais',
+            category: 'Poissonnerie',
+            categoryEmoji: '🐟',
+            description: 'Pêche en Atlantique Nord-Est — Zone FAO 27. Qualité Extra.',
+            isFood: true,
+            weight: '~300 g',
+            origin: 'Atlantique Nord-Est (Zone FAO 27)',
+            ingredients: '<strong>POISSON</strong> : Cabillaud (Gadus morhua). 100% filet, sans arête.',
+            allergens: {
+                poisson: 'present'
+            }
+        },
+        'fraises-gariguette': {
+            name: 'Fraises Gariguette de France',
+            category: 'Primeur',
+            categoryEmoji: '🍓',
+            description: 'Variété Gariguette — Calibre 25/35. Cueillies à maturité optimale.',
+            isFood: true,
+            weight: '250 g',
+            origin: 'France (Lot-et-Garonne)',
+            ingredients: 'Fraises (100%). Variété : Gariguette.',
+            allergens: {
+                // Fruit frais, pas d'allergènes
+            }
+        },
+        'sandwich-poulet': {
+            name: 'Sandwich Baguette Poulet Rôti',
+            category: 'Snacking',
+            categoryEmoji: '🥪',
+            description: 'Pain baguette tradition, filets de poulet rôti français, crudités, mayonnaise maison.',
+            isFood: true,
+            weight: '230 g',
+            origin: 'France',
+            ingredients: 'Pain baguette de tradition (farine de <strong>BLÉ</strong>, eau, sel, levure), filets de poulet rôti traité en salaison 32% (Origine France), mayonnaise maison (huile de colza, jaune d\'<strong>ŒUFS</strong>, <strong>MOUTARDE</strong> de Dijon, vinaigre, sel), tomates, salade, cornichons.',
+            allergens: {
+                gluten: 'present',
+                oeufs: 'present',
+                moutarde: 'present'
+            }
+        },
+        'pave-saumon': {
+            name: 'Pavé de Saumon Rôti',
+            category: 'Traiteur',
+            categoryEmoji: '🍽️',
+            description: 'Écrasé de pommes de terre à la truffe d\'été — Portion individuelle.',
+            isFood: true,
+            weight: '380 g',
+            origin: 'France',
+            ingredients: 'Saumon atlantique 45% (<strong>POISSON</strong>), pommes de terre 38%, <strong>BEURRE</strong> frais AOP, <strong>CRÈME</strong> fraîche, brisures de truffe d\'été 2% (Tuber aestivum), sel de Guérande, poivre de Sarawak.',
+            allergens: {
+                poisson: 'present',
+                lait: 'present',
+                celeri: 'traces'
+            }
+        }
+    };
+
+    // =====================================================
+    // RENDERING
+    // =====================================================
+    function getProduct() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('product');
+    }
+
+    function renderNotFound(container) {
+        container.innerHTML = `
+            <div class="not-found animate-in">
+                <div class="icon">🔍</div>
+                <h2>Produit non trouvé</h2>
+                <p>Le QR code scanné ne correspond à aucun produit dans notre base. Vérifiez l'étiquette ou contactez votre fournisseur.</p>
+            </div>
+        `;
+    }
+
+    function renderNonFood(container, product) {
+        container.innerHTML = `
+            <div class="product-card animate-in">
+                <div class="product-category">${product.categoryEmoji || '📦'} ${product.category}</div>
+                <div class="product-name">${product.name}</div>
+                <div class="product-desc">${product.description || ''}</div>
+            </div>
+            <div class="non-food-notice animate-in">
+                <div class="icon">ℹ️</div>
+                <h2>Produit non alimentaire</h2>
+                <p>Ce produit n'est pas un produit alimentaire. Aucune déclaration d'allergènes n'est applicable conformément au règlement (UE) n°1169/2011.</p>
+            </div>
+            ${product.ingredients ? `
+            <div class="ingredients-card animate-in">
+                <div class="section-title"><div class="icon success">📋</div> Composition</div>
+                <div class="ingredients-text">${product.ingredients}</div>
+            </div>` : ''}
+            ${renderFooter()}
+        `;
+    }
+
+    function renderProduct(container, product) {
+        const allergenStatuses = ALLERGENS.map(a => ({
+            ...a,
+            status: product.allergens[a.id] || 'absent'
+        }));
+
+        const present = allergenStatuses.filter(a => a.status === 'present');
+        const traces = allergenStatuses.filter(a => a.status === 'traces');
+        const absent = allergenStatuses.filter(a => a.status === 'absent');
+
+        const hasAny = present.length > 0 || traces.length > 0;
+
+        container.innerHTML = `
+            <div class="product-card animate-in">
+                <div class="product-category">${product.categoryEmoji || '🏷️'} ${product.category}</div>
+                <div class="product-name">${product.name}</div>
+                <div class="product-desc">${product.description || ''}</div>
+                <div class="product-meta">
+                    ${product.weight ? `<div class="product-meta-item">⚖️ ${product.weight}</div>` : ''}
+                    ${product.volume ? `<div class="product-meta-item">🥤 ${product.volume}</div>` : ''}
+                    ${product.origin ? `<div class="product-meta-item">📍 ${product.origin}</div>` : ''}
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend animate-in">
+                <div class="legend-item"><div class="legend-dot present"></div>Présent</div>
+                <div class="legend-item"><div class="legend-dot traces"></div>Traces possibles</div>
+                <div class="legend-item"><div class="legend-dot absent"></div>Absent</div>
+            </div>
+
+            ${present.length > 0 ? `
+            <div class="animate-in">
+                <div class="section-title"><div class="icon danger">⚠️</div> Allergènes présents</div>
+                <div class="allergen-grid">
+                    ${present.map(a => renderAllergenItem(a)).join('')}
+                </div>
+            </div>` : ''}
+
+            ${traces.length > 0 ? `
+            <div class="animate-in">
+                <div class="section-title"><div class="icon" style="background:var(--warning-bg)">⚡</div> Traces possibles</div>
+                <div class="allergen-grid">
+                    ${traces.map(a => renderAllergenItem(a)).join('')}
+                </div>
+            </div>` : ''}
+
+            ${!hasAny ? `
+            <div class="animate-in" style="text-align:center; padding:24px 16px; background:var(--success-bg); border:1px solid rgba(16,185,129,0.2); border-radius:var(--radius); margin-bottom:16px;">
+                <div style="font-size:36px; margin-bottom:8px;">✅</div>
+                <div style="font-size:15px; font-weight:700; margin-bottom:4px;">Aucun allergène déclaré</div>
+                <div style="font-size:12px; color:var(--text-secondary);">Ce produit ne contient aucun des 14 allergènes réglementaires.</div>
+            </div>` : ''}
+
+            <div class="animate-in">
+                <div class="section-title"><div class="icon success">📋</div> Tous les allergènes (14 INCO)</div>
+                <div class="allergen-grid">
+                    ${allergenStatuses.map(a => renderAllergenItem(a)).join('')}
+                </div>
+            </div>
+
+            ${product.ingredients ? `
+            <div class="ingredients-card animate-in">
+                <div class="section-title"><div class="icon" style="background:rgba(99,102,241,0.12)">🧾</div> Liste des ingrédients</div>
+                <div class="ingredients-text">${product.ingredients}</div>
+            </div>` : ''}
+
+            <div class="regulatory animate-in">
+                <div class="regulatory-title">📜 Information réglementaire</div>
+                <div class="regulatory-text">
+                    Conformément au règlement (UE) n°1169/2011 (INCO), les allergènes sont signalés en gras dans la liste des ingrédients. En cas de doute, consultez votre médecin ou allergologue. Les informations présentées peuvent être modifiées sans préavis — référez-vous toujours à l'étiquette physique du produit.
+                </div>
+            </div>
+
+            ${renderFooter()}
+        `;
+    }
+
+    function renderAllergenItem(a) {
+        return `
+            <div class="allergen-item ${a.status}">
+                <span class="allergen-emoji">${a.emoji}</span>
+                <div class="allergen-info">
+                    <div class="allergen-name">${a.name}</div>
+                    <div class="allergen-status ${a.status}">
+                        ${a.status === 'present' ? '⛔ Présent' : a.status === 'traces' ? '⚡ Traces' : '✓ Absent'}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderFooter() {
+        return `
+            <div class="footer">
+                <div class="footer-logo">🏷️ Label Editor TD4T</div>
+                <div class="footer-text">Page générée automatiquement — Domoteek © ${new Date().getFullYear()}</div>
+            </div>
+        `;
+    }
+
+    // =====================================================
+    // INIT
+    // =====================================================
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('app');
+        const productSlug = getProduct();
+
+        if (!productSlug || !PRODUCTS[productSlug]) {
+            document.getElementById('page-title').textContent = 'Produit non trouvé';
+            renderNotFound(container);
+            return;
+        }
+
+        const product = PRODUCTS[productSlug];
+        document.getElementById('page-title').textContent = product.name;
+        document.getElementById('page-subtitle').textContent = product.category + ' — Fiche allergènes INCO';
+        document.title = `${product.name} — Allergènes INCO`;
+
+        if (!product.isFood) {
+            renderNonFood(container, product);
+        } else {
+            renderProduct(container, product);
+        }
+    });
+    </script>
+</body>
+</html>
