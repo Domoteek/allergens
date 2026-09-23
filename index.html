@@ -7,7 +7,24 @@
     <meta name="description" content="Consultez les informations allergènes réglementaires (INCO) de nos produits en scannant le QR code de l'étiquette.">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🏷️</text></svg>">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        /* Inter (SIL Open Font License 1.1), servie depuis ce dépôt :
+           aucune requête vers un tiers, aucune adresse IP transmise. */
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 300 800;
+            font-display: swap;
+            src: url('fonts/inter-latin.woff2') format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 300 800;
+            font-display: swap;
+            src: url('fonts/inter-latin-ext.woff2') format('woff2');
+            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+        }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -248,6 +265,26 @@
         .legend-dot.absent { background: var(--text-muted); }
 
         /* === INGREDIENTS === */
+        .nutrition-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+        }
+        .nutrition-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .nutrition-table caption {
+            text-align: left; color: var(--text-secondary);
+            font-size: 12px; padding-bottom: 10px;
+        }
+        .nutrition-table th, .nutrition-table td {
+            padding: 9px 0; border-bottom: 1px solid var(--border); text-align: left;
+        }
+        .nutrition-table td { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .nutrition-table tr.sub th { padding-left: 16px; font-weight: 400; color: var(--text-secondary); }
+        .alcool-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-left: 3px solid #b3455e; border-radius: var(--radius);
+            padding: 18px 20px; margin-bottom: 16px; font-size: 13px; line-height: 1.55;
+        }
+        .alcool-card .picto { font-size: 22px; margin-bottom: 6px; }
         .ingredients-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -389,6 +426,68 @@
 
     // 'present' | 'traces' | 'absent'
     const PRODUCTS = {
+        // --- Cuvées générées depuis elabel-data.js — ne pas éditer à la main ---
+        'cuvee-prestige-2023': {
+            name: 'Cuvée Prestige 2023',
+            category: 'Vin rouge',
+            categoryEmoji: '🍷',
+            description: 'Château de l\'Exemple — Bordeaux — Appellation d’origine protégée',
+            isFood: true,
+            volume: '750 ml — 13,5 % vol',
+            origin: 'Produit de France',
+            alcool: true,
+            ingredients: 'Ingrédients : raisins, <strong>ANHYDRIDE SULFUREUX</strong> (conservateur — E 220), acide tartrique (correcteur d’acidité — E 334). Auxiliaires technologiques : levures œnologiques, bentonite (clarification).',
+            nutrition: {"energieKJ":330,"energieKcal":79,"matieresGrasses":0,"acidesGrasSatures":0,"glucides":2.6,"sucres":0.6,"proteines":0.1,"sel":0.01},
+            allergens: {
+                sulfites: 'present'
+            }
+        },
+        'rose-fruite-2023': {
+            name: 'Rosé Fruité 2023',
+            category: 'Vin rosé',
+            categoryEmoji: '🍷',
+            description: 'Domaine de l\'Été — Côtes de Provence — Appellation d’origine protégée',
+            isFood: true,
+            volume: '750 ml — 12,5 % vol',
+            origin: 'Produit de France',
+            alcool: true,
+            ingredients: 'Ingrédients : raisins (issus de l’agriculture biologique), <strong>ANHYDRIDE SULFUREUX</strong> (conservateur — E 220). Auxiliaires technologiques : levures œnologiques indigènes.',
+            nutrition: {"energieKJ":310,"energieKcal":74,"matieresGrasses":0,"acidesGrasSatures":0,"glucides":2.2,"sucres":1.4,"proteines":0.1,"sel":0.01},
+            allergens: {
+                sulfites: 'present'
+            }
+        },
+        'blanc-de-blancs': {
+            name: 'Blanc de Blancs',
+            category: 'Vin mousseux de qualité — Brut',
+            categoryEmoji: '🍷',
+            description: 'Maison Prestige — Champagne — Appellation d’origine protégée',
+            isFood: true,
+            volume: '750 ml — 12 % vol',
+            origin: 'Élaboré en France',
+            alcool: true,
+            ingredients: 'Ingrédients : raisins, saccharose (liqueur de tirage et de dosage), <strong>ANHYDRIDE SULFUREUX</strong> (conservateur — E 220), acide citrique (correcteur d’acidité — E 330). Auxiliaires technologiques : levures œnologiques, alginate (dégorgement).',
+            nutrition: {"energieKJ":320,"energieKcal":76,"matieresGrasses":0,"acidesGrasSatures":0,"glucides":3.1,"sucres":2.8,"proteines":0.2,"sel":0.01},
+            allergens: {
+                sulfites: 'present'
+            }
+        },
+        'cuvee-minerale-2023': {
+            name: 'Cuvée Minérale 2023',
+            category: 'Vin blanc',
+            categoryEmoji: '🍷',
+            description: 'Domaine Nature — Vin de France',
+            isFood: true,
+            volume: '75 cl — 13 % vol',
+            origin: 'Produit de France',
+            alcool: true,
+            ingredients: 'Ingrédients : raisins (sans intrant ajouté — sulfites naturellement présents). Auxiliaires technologiques : levures indigènes.',
+            nutrition: {"energieKJ":315,"energieKcal":75,"matieresGrasses":0,"acidesGrasSatures":0,"glucides":2.4,"sucres":0.4,"proteines":0.1,"sel":0.01},
+            allergens: {
+                sulfites: 'present'
+            }
+        },
+        // --- fin des cuvées générées ---
         'cote-de-boeuf': {
             name: 'Côte de Bœuf Maturée',
             category: 'Boucherie',
@@ -673,6 +772,9 @@
                 <div class="ingredients-text">${product.ingredients}</div>
             </div>` : ''}
 
+            ${renderNutrition(product)}
+            ${renderAlcool(product)}
+
             <div class="regulatory animate-in">
                 <div class="regulatory-title">📜 Information réglementaire</div>
                 <div class="regulatory-text">
@@ -682,6 +784,42 @@
 
             ${renderFooter()}
         `;
+    }
+
+    function renderNutrition(product) {
+        if (!product.nutrition) return '';
+        const n = product.nutrition;
+        const g = (v) => String(v).replace('.', ',') + ' g';
+        const lignes = [
+            ['Énergie', n.energieKJ + ' kJ / ' + n.energieKcal + ' kcal', false],
+            ['Matières grasses', g(n.matieresGrasses), false],
+            ['dont acides gras saturés', g(n.acidesGrasSatures), true],
+            ['Glucides', g(n.glucides), false],
+            ['dont sucres', g(n.sucres), true],
+            ['Protéines', g(n.proteines), false],
+            ['Sel', g(n.sel), false]
+        ];
+        return `
+            <div class="nutrition-card animate-in">
+                <div class="section-title"><div class="icon" style="background:rgba(16,185,129,0.12)">📊</div> Déclaration nutritionnelle</div>
+                <table class="nutrition-table">
+                    <caption>Valeurs moyennes pour 100 ml</caption>
+                    <tbody>
+                        ${lignes.map(([l, v, sub]) => `<tr class="${sub ? 'sub' : ''}"><th scope="row">${l}</th><td>${v}</td></tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>`;
+    }
+
+    function renderAlcool(product) {
+        if (!product.alcool) return '';
+        return `
+            <div class="alcool-card animate-in">
+                <div class="picto">🚫🤰</div>
+                La consommation de boissons alcoolisées pendant la grossesse, même en faible
+                quantité, peut avoir des conséquences graves sur la santé de l'enfant.<br>
+                L'abus d'alcool est dangereux pour la santé, à consommer avec modération.
+            </div>`;
     }
 
     function renderAllergenItem(a) {
